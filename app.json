@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "sry-app",
+    "slug": "sry-app",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "sry-app"
+}
