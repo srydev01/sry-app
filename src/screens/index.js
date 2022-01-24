@@ -1,0 +1,8 @@
+export { default as Login } from './Login/Login'
+export { default as Registration } from './Registration/Registration'
+export { default as Home } from './Home/Home'
+export { default as Workflows } from './Workflows/Workflows'
+export { default as Products } from './Products/Products'
+export { default as Admins } from './Admin/Admins'
+export { default as Profile } from './Profile/Profile'
+export { default as WorkflowView } from './Workflows/WorkflowView'
