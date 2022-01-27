@@ -9,7 +9,7 @@ import { HomeStackScreen, WorkflowsStackScreen, ProductsStackScreen, AdminsStack
 
 import firebase from '../database/config';
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
@@ -22,31 +22,55 @@ const auth = getAuth()
 
 export default function MainContainer(props) {
   const [user, setUser] = useState(null)
-
-  const Tab = createBottomTabNavigator()
-
-  const Home = HomeStackScreen(user, mainTheme)
-
-  const mainTheme = {
+  const [userRef, setUserRef] = useState(null)
+  const [mainTheme, SetMainTheme] = useState({
     Color: { backgroundColor: '#930' },
     BGColor: { backgroundColor: '#e8e8f5' },
     ColorLight: { backgroundColor: '#fff9ff' },
     ColorLight2: { backgroundColor: '#ebb' },
+    ColorSuccess: { backgroundColor: "#090" },
+    ColorFail: { backgroundColor: "#900" },
     Border: { borderColor: '#930', borderStyle: 'solid', borderWidth: 1 },
     Border2: { borderColor: '#930', borderStyle: 'solid', borderWidth: 2 },
-    BorderLight: { borderColor: '#fff', borderStyle: 'solid', borderWidth: 1 },
-    BorderLight2: { borderColor: '#fff', borderStyle: 'solid', borderWidth: 2 },
+    BorderLight: { borderColor: '#fff9ff', borderStyle: 'solid', borderWidth: 1 },
+    BorderLight2: { borderColor: '#fff9ff', borderStyle: 'solid', borderWidth: 2 },
     TextColor: { color: '#000' },
     TextColorGrey: { color: '#444' },
     TextColorLight: { color: '#fff' },
     colorInActive: { backgroundColor: '#666' },
     colorTextInActive: { color: '#666' }
-  }
+  })
 
-  function onAuthChanged(userRef) {
-    if (userRef) {
-      getDoc(doc(firebase, 'users', userRef.uid)).then(data => {
+  const Tab = createBottomTabNavigator()
+
+  const Home = HomeStackScreen(user, mainTheme)
+
+  /*const mainTheme = {
+    Color: { backgroundColor: '#930' },
+    BGColor: { backgroundColor: '#e8e8f5' },
+    ColorLight: { backgroundColor: '#fff9ff' },
+    ColorLight2: { backgroundColor: '#ebb' },
+    ColorSuccess: { backgroundColor: "#090" },
+    ColorFail: { backgroundColor: "#900" },
+    Border: { borderColor: '#930', borderStyle: 'solid', borderWidth: 1 },
+    Border2: { borderColor: '#930', borderStyle: 'solid', borderWidth: 2 },
+    BorderLight: { borderColor: '#fff9ff', borderStyle: 'solid', borderWidth: 1 },
+    BorderLight2: { borderColor: '#fff9ff', borderStyle: 'solid', borderWidth: 2 },
+    TextColor: { color: '#000' },
+    TextColorGrey: { color: '#444' },
+    TextColorLight: { color: '#fff' },
+    colorInActive: { backgroundColor: '#666' },
+    colorTextInActive: { color: '#666' }
+  }*/
+
+  function onAuthChanged(userDoc) {
+    if (userDoc) {
+      getDoc(doc(firebase, 'users', userDoc.uid)).then(data => {
+        getDoc(data.data().theme).then(theme => {
+          SetMainTheme(theme.data())
+        })
         setUser(data.data())
+        setUserRef(data.id)
       })
     } else {
       setUser(null)

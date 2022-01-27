@@ -22,7 +22,7 @@ export default function LoginScreen(props) {
 
   //On press Sign up.
   const onFooterLinkPress = () => {
-    props.navigation.navigate('Registration')
+    props.navigation.navigate('RegistrationScreen')
   }
 
   //On press Log in

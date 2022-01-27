@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //Import component.
 import styles from "./styles";
-import { View, Text, Modal, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Alert, TextInput } from "react-native";
+import { View, Text, Modal, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Alert, TextInput, SafeAreaView, RefreshControl } from "react-native";
 
 //Import firebase and config DB.
 import firebase from '../../database/config'
@@ -16,6 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 export default function Admins(props) {
   //Init const state.
+  const [refreshing, setRefreshing] = useState(false)
   const [adminsRef, setAdminsRef] = useState([])
   const [admins, setAdmins] = useState([])
   const [nameSearch, setNameSearch] = useState('')
@@ -29,22 +30,29 @@ export default function Admins(props) {
 
   //Get all admins
   useEffect(() => {
-    const adminsSubscribe = onSnapshot(query(collection(doc(firebase, 'users', props.extraData.id), 'admins'), orderBy('createdDate')), data => {
-      let i = 1
-      let adminsBuffer = []
-      data.forEach(admin => {
-        getDoc(admin.data().user).then(user => {
-          adminsBuffer.push(user.data())
-          if (i == data.docs.length) {
-            setAdmins(adminsBuffer)
-            setAdminsRef(adminsBuffer)
-          }
-          i++
-        })
-      })
-    })
+    const adminsSubscribe = onSnapshot(query(collection(doc(firebase, 'users', props.extraData.id), 'admins'), orderBy('createdDate')), admins => callbackAdmins(admins))
     return () => adminsSubscribe()
   }, [])
+
+  const callbackAdmins = (admins) => {
+    let i = 1
+    let adminsBuffer = []
+    admins.forEach(admin => {
+      getDoc(admin.data().user).then(user => {
+        adminsBuffer.push(user.data())
+        if (i == admins.docs.length) {
+          setAdmins(adminsBuffer)
+          setAdminsRef(adminsBuffer)
+          setRefreshing(false)
+        }
+        i++
+      })
+    })
+  }
+
+  const onRefresh = () => {
+    getDocs(query(collection(doc(firebase, 'users', props.extraData.id), 'admins'), orderBy('createdDate'))).then(admins => callbackAdmins(admins))
+  }
 
   //On search admins
   const onSearch = (text) => {
@@ -91,8 +99,16 @@ export default function Admins(props) {
   }
 
   return (
-    <View style={[styles.container, mainTheme.BGColor]}>
-      <ScrollView style={{ width: '100%' }}>
+    <SafeAreaView style={[styles.container, mainTheme.BGColor]}>
+      <ScrollView
+        style={{ width: '100%' }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         <View style={styles.adminsList}>
           {admins.map((item, index) => {
             return <TouchableOpacity
@@ -124,42 +140,43 @@ export default function Admins(props) {
             style={styles.modalContainer}
           >
             <TouchableWithoutFeedback>
-                <View style={[styles.modalAddContent, mainTheme.BGColor, mainTheme.Border2]}>
-                  <Text style={[styles.addAdminTitle, mainTheme.TextColorGrey]}>
-                    Add admin
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.btnCloseModal}
-                    onPress={() => closeModalAdd()}
-                  >
-                    <MaterialCommunityIcons
-                      name="close-box"
-                      size={30}
-                      color={mainTheme.Border2.borderColor}
-                    />
-                  </TouchableOpacity>
-                  <TextInput
-                    style={styles.input}
-                    placeholder='Ref'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setRef(text)}
-                    value={ref}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
+              <View style={[styles.modalAddContent, mainTheme.ColorLight]}>
+                <Text style={[styles.addAdminTitle, mainTheme.TextColorGrey]}>
+                  Add admin
+                </Text>
+                <TouchableOpacity
+                  style={styles.btnCloseModal}
+                  onPress={() => closeModalAdd()}
+                >
+                  <MaterialCommunityIcons
+                    name="close-box"
+                    size={30}
+                    color={mainTheme.Border2.borderColor}
                   />
-                  <TouchableOpacity
-                    style={[styles.buttonAdd, mainTheme.Color]}
-                    onPress={() => addAdmin()}>
-                    <Foundation
-                      name="plus"
-                      size={25}
-                      color={mainTheme.TextColorLight.color}
-                    />
-                    <Text style={styles.buttonAddTitle}>
-                      Add
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Ref'
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(text) => setRef(text)}
+                  value={ref}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                  color={mainTheme.TextColor.Color}
+                />
+                <TouchableOpacity
+                  style={[styles.buttonAdd, mainTheme.Color]}
+                  onPress={() => addAdmin()}>
+                  <Foundation
+                    name="plus"
+                    size={25}
+                    color={mainTheme.TextColorLight.color}
+                  />
+                  <Text style={styles.buttonAddTitle}>
+                    Add
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </TouchableWithoutFeedback>
           </TouchableOpacity>
         </Modal>
@@ -185,6 +202,6 @@ export default function Admins(props) {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   )
 }

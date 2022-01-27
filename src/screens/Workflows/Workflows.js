@@ -6,7 +6,7 @@ import styles from "./styles";
 
 //Import firebase and config DB.
 import firebase from '../../database/config'
-import { collection, doc, getDocs, query, addDoc, where, onSnapshot, orderBy } from 'firebase/firestore'
+import { collection, doc, getDocs, query, addDoc, onSnapshot, orderBy } from 'firebase/firestore'
 
 //Import vector icons.
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -142,7 +142,7 @@ export default function Workflows(props) {
           style={styles.modalContainer}
         >
           <TouchableWithoutFeedback>
-            <View style={[styles.modalAddContent, mainTheme.BGColor, mainTheme.Border2]}>
+            <View style={[styles.modalAddContent, mainTheme.ColorLight]}>
               <Text style={[styles.addAdminTitle, mainTheme.TextColorGrey]}>
                 New workflow
               </Text>
@@ -164,6 +164,7 @@ export default function Workflows(props) {
                   autoCapitalize="none"
                   placeholder="Workflow"
                   value={newWf}
+                  color={mainTheme.TextColor.Color}
                   onChangeText={text => setNewWf(text)}
                   onSubmitEditing={() => addWorkflow()}
                 />

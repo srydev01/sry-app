@@ -108,12 +108,12 @@ export default StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems:"center"
+    alignItems:"center",
+    backgroundColor: '#0009'
   },
   modalAddContent: {
-    maxHeight: '80%',
-    marginHorizontal: '5%',
-    width: '90%',
+    position: 'absolute',
+    width: 300,
     borderRadius: 5,
     paddingTop: 2,
     paddingBottom: 10,
@@ -148,7 +148,17 @@ export default StyleSheet.create({
     marginBottom: 5,
     marginLeft: 30,
     marginRight: 30,
-    paddingLeft: 16
+    paddingLeft: 16,
+    fontSize: 16,
+    fontWeight: 'bold',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3
   },
   buttonAdd: {
     marginLeft: 30,

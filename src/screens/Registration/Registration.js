@@ -24,7 +24,7 @@ export default function RegistrationScreen(props) {
 
   //On press Log in.
   const onFooterLinkPress = () => {
-    props.navigation.navigate('Login')
+    props.navigation.navigate('LoginScreen')
   }
 
   //On press Create account.
@@ -85,7 +85,7 @@ export default function RegistrationScreen(props) {
         />
         <TextInput
           style={styles.input}
-          placeholder='Full Name'
+          placeholder='Username'
           placeholderTextColor="#aaaaaa"
           onChangeText={(text) => setUsername(text)}
           value={username}
