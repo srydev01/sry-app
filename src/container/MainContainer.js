@@ -64,11 +64,9 @@ export default function MainContainer(props) {
   }*/
 
   function onAuthChanged(userDoc) {
+    console.log('Auth.');
     if (userDoc) {
       getDoc(doc(firebase, 'users', userDoc.uid)).then(data => {
-        getDoc(data.data().theme).then(theme => {
-          SetMainTheme(theme.data())
-        })
         setUser(data.data())
         setUserRef(data.id)
       })
@@ -78,7 +76,7 @@ export default function MainContainer(props) {
   }
   useEffect(() => {
     const authSubScrib = onAuthStateChanged(auth, onAuthChanged)
-    return authSubScrib
+    return () => authSubScrib()
   }, [])
 
   return (

@@ -8,7 +8,7 @@ import styles from './styles'
 //Import firebase and config DB.
 import firebase from '../../database/config'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
-import { collection, query, doc, setDoc, getDocs, getDoc } from 'firebase/firestore'
+import { collection, query, doc, setDoc, getDocs, getDoc, increment, updateDoc } from 'firebase/firestore'
 
 export default function RegistrationScreen(props) {
   //Init const state.
@@ -29,34 +29,38 @@ export default function RegistrationScreen(props) {
 
   //On press Create account.
   const onRegisterPress = () => {
+    updateDoc(doc(firebase, 'configure', 'ICmUTUyu78F72FfVnCFs'), {
+      number: increment(1)
+    }).then(() => {
+      getDoc(doc(firebase, 'configure', 'ICmUTUyu78F72FfVnCFs')).then(data => {
+        let ref = data.data().number
+        createUserWithEmailAndPassword(auth, email, password).then(res => {
+          const uid = res.user.uid
+          const data = {
+            id: uid,
+            username: username,
+            ref: ref.toString(),
+            email: email,
+            type: 'Admin'
+          }
+          //Add to Users collection.
+          setDoc(doc(firebase, 'users', uid), data).then(() => {
+            getDoc(doc(firebase, 'users', uid)).then(data => {
+              console.log(data.data().username + ' logged in.');
+            })
+          })
+        })
+      })
+    })
     //Check matching between password and confirm password.
     if (password !== confirmPassword) {
       alert("Passwords don't match.")
       return
     }
-    getUniqueNumber().then(ref => {
-      createUserWithEmailAndPassword(auth, email, password).then(res => {
-        const uid = res.user.uid
-        const data = {
-          id: uid,
-          username: username,
-          ref: ref,
-          email: email,
-          type: 'Admin'
-        }
-        //Add to Users collection.
-        setDoc(doc(firebase, 'users', uid), data).then(() => {
-          getDoc(doc(firebase, 'users', uid)).then(data => {
-            console.log(data.data().username + ' logged in.');
-            props.navigation.navigate('Home', { user: data.data() })
-          })
-        })
-      })
-    })
   }
 
   //Get unique number (Only type is "Admin").
-  const getUniqueNumber = () => {
+  /*const getUniqueNumber = () => {
     return new Promise((resolve, reject) => {
       let number, numberRef = []
       getDocs(query(collection(firebase, 'users'))).then(data => {
@@ -73,7 +77,7 @@ export default function RegistrationScreen(props) {
         resolve(number)
       })
     })
-  }
+  }*/
 
   return (
     <View style={[styles.container, mainTheme.BGColor]}>

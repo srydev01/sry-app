@@ -52,4 +52,37 @@ export default StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 6,
   },
+  productsList: {
+    paddingHorizontal: 10,
+    paddingVertical: 10
+  },
+  productBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginTop: 5,
+    marginBottom: 2,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  productCode: {
+    flex: 2,
+    fontSize: 18
+  },
+  productName: {
+    flex: 5,
+    fontSize: 18
+  },
+  productPrice: {
+    flex: 3,
+    fontSize: 18
+  }
 })
