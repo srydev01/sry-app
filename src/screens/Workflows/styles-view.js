@@ -49,7 +49,7 @@ export default StyleSheet.create({
   },
   sequenceBox: {
     padding: 10,
-    paddingRight: 40,
+    paddingRight: 0,
     margin: '4%',
     borderRadius: 6,
     marginTop: 10,
@@ -65,12 +65,11 @@ export default StyleSheet.create({
   },
   sequenceText: {
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 2
   },
   SequenceDetails: {
     padding: 5,
-    borderRadius: 6
+    borderRadius: 6,
   },
   sequenceSubTitle: {
     fontWeight: 'bold',
@@ -104,16 +103,17 @@ export default StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     top: 4,
-    right: 36,
+    right: 0,
     width: 50,
     height: 40
   },
   deleteSeq: {
     position: 'absolute',
-    right: 10,
-    top: 4,
+    right: 0,
+    bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 50,
     height: 40
   },
   btnSaveSequence: {
@@ -215,7 +215,6 @@ export default StyleSheet.create({
     marginRight: 30,
     paddingLeft: 16,
     fontSize: 16,
-    fontWeight: 'bold',
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

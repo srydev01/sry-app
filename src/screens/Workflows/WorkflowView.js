@@ -36,6 +36,7 @@ export default function WorkflowView(props) {
   const mainTheme = props.mainTheme
 
   const wfNameRef = useRef()
+  const newSeqRef = useRef()
 
   const workflowDoc = doc(doc(firebase, 'users', props.extraData.id), 'workflows', props.route.params.workflow.id)
 
@@ -128,14 +129,11 @@ export default function WorkflowView(props) {
     setViewSequence(viewSequenceRef.map(item => item))
   }
 
-  const removeSequence = (index) => {
-    let sequencesRef = sequences
-    delete sequencesRef[index]
-    setSequences(sequencesRef.map(data => data))
-  }
-
   const onPressAddSeq = () => {
     setAddseq(true)
+    setTimeout(() => {
+      newSeqRef.current.focus()
+    }, 0)
   }
 
   const addSequence = () => {
@@ -312,19 +310,19 @@ export default function WorkflowView(props) {
                 size={20}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.deleteSeq]}
-              onPress={() => onPressDeleteSeq(sequence)}
-            >
-              <FontAwesome5
-                name='trash-alt'
-                size={20}
-                color={mainTheme.TextColor.color}
-              />
-            </TouchableOpacity>
             {viewSequence[index]
               ?
               <View style={[styles.SequenceDetails]}>
+                <TouchableOpacity
+                  style={[styles.deleteSeq]}
+                  onPress={() => onPressDeleteSeq(sequence)}
+                >
+                  <FontAwesome5
+                    name='trash-alt'
+                    size={20}
+                    color={mainTheme.ColorFail.backgroundColor}
+                  />
+                </TouchableOpacity>
                 <Text style={[mainTheme.TextColor, styles.sequenceSubTitle]}>Status Success: <Text style={styles.statusText}>
                   {sequence.statusSuccess}</Text>
                 </Text>
@@ -349,6 +347,7 @@ export default function WorkflowView(props) {
             style={[styles.sequenceBox, mainTheme.BGColor, mainTheme.BorderLight]}
           >
             <TextInput
+              ref={newSeqRef}
               style={[styles.sequenceText, mainTheme.TextColor]}
               value={newSeq}
               onChangeText={text => setNewSeq(text)}

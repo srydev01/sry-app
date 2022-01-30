@@ -61,7 +61,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     borderRadius: 4,
     paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingVertical: 14,
     marginTop: 5,
     marginBottom: 2,
     shadowColor: "#000",
@@ -75,14 +75,159 @@ export default StyleSheet.create({
   },
   productCode: {
     flex: 2,
-    fontSize: 18
+    fontSize: 16
   },
   productName: {
-    flex: 5,
-    fontSize: 18
+    flex: 7,
+    fontSize: 16
   },
   productPrice: {
     flex: 3,
-    fontSize: 18
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems:"center",
+    backgroundColor: '#0009'
+  },
+  modalAddContent: {
+    maxHeight: '80%',
+    width: '90%',
+    borderRadius: 5,
+    paddingTop: 30,
+    paddingBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.00,
+    elevation: 24,
+  },
+  addProductLabel: {
+    marginTop: 10,
+    marginLeft: 30,
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  input: {
+    marginVertical: 8,
+    height: 48,
+    borderRadius: 5,
+    overflow: 'hidden',
+    backgroundColor: 'white',
+    marginHorizontal: 30,
+    paddingLeft: 16,
+    fontSize: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3
+  },
+  inputArea: {
+    marginVertical: 8,
+    borderRadius: 5,
+    overflow: 'hidden',
+    backgroundColor: 'white',
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 30,
+    marginRight: 30,
+    paddingLeft: 16,
+    fontSize: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3
+  },
+  selectWf: {
+    marginHorizontal: 30,
+    marginVertical: 10
+  },
+  selectWfLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingVertical: 4
+  },
+  wfBox: {
+    justifyContent: 'center',
+    maxWidth: 300,
+    height: 40,
+    marginLeft: 30,
+    marginVertical: 4,
+    paddingHorizontal: 5,
+    borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3
+  },
+  wfLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  modalGrpBtn: {
+    paddingVertical: 4,
+    flexDirection: 'row',
+    alignSelf: 'center'
+  },
+  buttonSave: {
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 10,
+    width: 70,
+    height: 36,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: 'center',
+    flexDirection: 'row',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  buttonCancel: {
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 10,
+    width: 70,
+    height: 36,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: 'center',
+    flexDirection: 'row',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  buttonAddTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingHorizontal: 5
   }
 })
