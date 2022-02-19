@@ -12,10 +12,9 @@ export default StyleSheet.create({
     paddingVertical: 10
   },
   adminBox: {
-    height: 100,
-    borderRadius: 10,
+    borderRadius: 4,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 15,
     marginVertical: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -54,6 +53,12 @@ export default StyleSheet.create({
   adminFlows: {
     marginTop: 7,
     fontSize: 14
+  },
+  productList: {
+    marginLeft: 20,
+  },
+  productName: {
+    
   },
   modalAddContent: {
     position: 'absolute',

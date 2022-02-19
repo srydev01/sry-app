@@ -2,7 +2,7 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { Login, Registration, Home, Workflows, Products, Admins, Profile, WorkflowView } from '../screens';
+import { Login, Registration, Home, Workflows, Products, Admins, AdminView, Profile, WorkflowView, EditProducts } from '../screens';
 
 const Stack = createStackNavigator()
 
@@ -44,6 +44,8 @@ const AdminsStackScreen = (user, mainTheme) => {
       headerShown: false
     })}>
       <Stack.Screen name='AdminsScreen'>{props => <Admins {...props} extraData={user} mainTheme={mainTheme} />}</Stack.Screen>
+      <Stack.Screen name='AdminViewScreen'>{props => <AdminView {...props} extraData={user} mainTheme={mainTheme} />}</Stack.Screen>
+      <Stack.Screen name='EditProducts'>{props => <EditProducts {...props} extraData={user} mainTheme={mainTheme} />}</Stack.Screen>
     </Stack.Navigator>
   )
 }

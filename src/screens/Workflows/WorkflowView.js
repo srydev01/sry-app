@@ -17,8 +17,11 @@ export default function WorkflowView(props) {
   const [editWfName, setEditWfName] = useState(false)
   const [viewSequence, setViewSequence] = useState([])
   const [wfName, setWfName] = useState('')
+
   const [sequences, setSequences] = useState([])
+  const [sequenceAdmin, setSequenceAdmin] = useState([])
   const [adminsExisting, setAdminsExisting] = useState([])
+
   const [addSeq, setAddseq] = useState(false)
   const [newSeq, setNewSeq] = useState('')
   const [modalEditSeq, setModalEditSeq] = useState(false)
@@ -38,7 +41,8 @@ export default function WorkflowView(props) {
   const wfNameRef = useRef()
   const newSeqRef = useRef()
 
-  const workflowDoc = doc(doc(firebase, 'users', props.extraData.id), 'workflows', props.route.params.workflow.id)
+  const userCol = doc(firebase, 'users', props.extraData.id)
+  const workflowDoc = doc(userCol, 'workflows', props.route.params.workflow.id)
 
   useEffect(() => {
     const workflowSubscribe = onSnapshot(workflowDoc, wfData => {
@@ -46,45 +50,11 @@ export default function WorkflowView(props) {
         setWf(wfData)
         setWfName(wfData.data().name)
         getDocs(query(collection(wfData.ref, 'sequences'), orderBy('number'))).then(seqs => {
-          if (seqs.docs.length > 0) {
-            let i = 1
-            let seqsRef = []
-            seqs.forEach(seq => {
-              let seqData = seq.data()
-              seqData.ref = seq.ref
-              getDocs(query(collection(seq.ref, 'admins'))).then(adminsList => {
-                if (adminsList.docs.length > 0) {
-                  let j = 1
-                  let adminsBuffer = []
-                  adminsList.forEach(admin => {
-                    getDoc(admin.data().user).then(user => {
-                      adminsBuffer.push(user)
-                      if (j == adminsList.docs.length) {
-                        seqData.admins = adminsBuffer
-                        seqsRef[seq.data().number] = seqData
-                        if (i == seqs.docs.length) {
-                          setSequences(seqsRef.map(item => item))
-                        }
-                        i++
-                      }
-                      j++
-                    })
-                  })
-                } else {
-                  seqData.admins = adminsList.docs.map(admin => admin.data())
-                  seqsRef[seq.data().number] = seqData
-                  if (i == seqs.docs.length) {
-                    setSequences(seqsRef.map(item => item))
-                  }
-                  i++
-                }
-              })
-            })
-          } else {
-            setSequences([])
-          }
+          setSequences(seqs.docs.map(seq => seq))
+          getSeuenceAdmin(seqs)
         })
-      } else {
+      }
+      else {
         props.navigation.navigate('WorkflowsScreen')
       }
     })
@@ -107,6 +77,21 @@ export default function WorkflowView(props) {
     })
     return () => adminsSubscribe()
   }, [])
+
+  const getSeuenceAdmin = (seqs) => {
+    let sequenceAdminRef = []
+    getDocs(query(collection(userCol, 'sequence_admin'), where('sequence', 'in', seqs.docs.map(seq => seq.ref)))).then(seqAdmins => {
+      seqAdmins.forEach(seqAdmin => {
+        getDoc(seqAdmin.data().admin).then(admin => {
+          sequenceAdminRef.push({
+            seq: seqAdmin.data().sequence.id,
+            admin: admin
+          })
+          setSequenceAdmin(sequenceAdminRef.map(admin => admin))
+        })
+      })
+    })
+  }
 
   const onPressEditWfName = () => {
     setEditWfName(true)
@@ -160,12 +145,12 @@ export default function WorkflowView(props) {
     setNewSeq('')
   }
 
-  const onPressEditSeq = (sequence) => {
-    setAdminsNotAssigned(adminsExisting.filter(exist => sequence.admins.findIndex(assigned => assigned.id == exist.id) < 0))
+  const onPressEditSeq = (sequence, index) => {
+    setAdminsNotAssigned(adminsExisting.filter(exist => sequenceAdmin.findIndex(assigned => assigned.admin.id == exist.id && assigned.seq == sequence.id) < 0))
     setSequenceRef(sequence)
-    setAdminsAssigned(sequence.admins.map(admin => admin))
-    setSeqNameEdit(sequence.work)
-    setSeqStatusEdit(sequence.statusSuccess)
+    setAdminsAssigned(sequenceAdmin.filter(seqAdmin => seqAdmin.seq == sequence.id).map(seqAdmin => seqAdmin.admin))
+    setSeqNameEdit(sequence.data().work)
+    setSeqStatusEdit(sequence.data().statusSuccess)
     setModalEditSeq(true)
   }
 
@@ -189,19 +174,18 @@ export default function WorkflowView(props) {
 
   const saveEditSeq = () => {
     adminsAssigned.forEach(admin => {
-      getDocs(query(collection(sequenceRef.ref, 'admins'), where('user', '==', admin.ref))).then(existing => {
+      getDocs(query(collection(userCol, 'sequence_admin'), where('sequence', '==', sequenceRef.ref), where('admin', '==', admin.ref))).then(existing => {
         if (existing.docs.length == 0) {
-          addDoc(collection(sequenceRef.ref, 'admins'), {
-            user: admin.ref
+          addDoc(collection(userCol, 'sequence_admin'), {
+            admin: admin.ref,
+            sequence: sequenceRef.ref
           })
         }
       })
     })
     if (adminsNotAssigned.length > 0) {
-      getDocs(query(collection(sequenceRef.ref, 'admins'), where('user', 'in', adminsNotAssigned.map(admin => admin.ref)))).then(admins => {
-        admins.forEach(admin => {
-          deleteDoc(admin.ref)
-        })
+      getDocs(query(collection(userCol, 'sequence_admin'), where('sequence', '==', sequenceRef.ref), where('admin', 'in', adminsNotAssigned.map(notAsg => notAsg.ref)))).then(admins => {
+        admins.forEach(admin => deleteDoc(admin.ref))
       })
     }
     updateDoc(sequenceRef.ref, {
@@ -259,7 +243,7 @@ export default function WorkflowView(props) {
   return (
     <View style={[styles.container, mainTheme.BGColor]}>
       <ScrollView style={{ width: '100%' }}>
-        <View style={[styles.wfNameBox, editWfName ? { backgroundColor: '#fff' } : mainTheme.Color]}>
+        <View style={[styles.wfNameBox, editWfName ? mainTheme.ColorLight : mainTheme.ColorWF]}>
           <TextInput
             ref={wfNameRef}
             style={[styles.inputWfName, editWfName ? mainTheme.TextColor : mainTheme.TextColorLight]}
@@ -299,10 +283,10 @@ export default function WorkflowView(props) {
             onPress={() => onPressViewSequence(index)}
             activeOpacity={0.4}
           >
-            <Text style={[styles.sequenceText, mainTheme.TextColor]}>{sequence.work}</Text>
+            <Text style={[styles.sequenceText, mainTheme.TextColor]}>{sequence.data().work}</Text>
             <TouchableOpacity
               style={styles.btnEditSequence}
-              onPress={() => onPressEditSeq(sequence)}
+              onPress={() => onPressEditSeq(sequence, index)}
             >
               <FontAwesome5
                 name="edit"
@@ -324,14 +308,14 @@ export default function WorkflowView(props) {
                   />
                 </TouchableOpacity>
                 <Text style={[mainTheme.TextColor, styles.sequenceSubTitle]}>Status Success: <Text style={styles.statusText}>
-                  {sequence.statusSuccess}</Text>
+                  {sequence.data().statusSuccess}</Text>
                 </Text>
                 <Text style={styles.sequenceSubTitle}>Admins</Text>
                 <View style={styles.adminsBox}>
-                  {sequence.admins.map((admin, i) => {
+                  {sequenceAdmin.filter(seqAdmin => seqAdmin.seq == sequence.id).map((admin, i) => {
                     return <View style={[styles.adminName]} key={i}>
                       <Text style={mainTheme.TextColor}>
-                        {admin.data().username}
+                        {admin.admin.data().username}
                       </Text>
                     </View>
                   })}
@@ -425,7 +409,7 @@ export default function WorkflowView(props) {
                   return <TouchableOpacity
                     key={index}
                     activeOpacity={0.6}
-                    style={[styles.adminEditName, mainTheme.ColorSuccess]}
+                    style={[styles.adminEditName, mainTheme.ColorAdmin]}
                     onPress={() => unAssignAdmin(admin)}
                   >
                     <Text style={[styles.adminEditNameLabel, mainTheme.TextColorLight]}>
@@ -433,7 +417,7 @@ export default function WorkflowView(props) {
                     </Text>
                   </TouchableOpacity>
                 })}
-                <Text style={[styles.editLabel, mainTheme.TextColor]}>Not assigned</Text>
+                <Text style={[styles.editLabel, mainTheme.TextColor]}>Unassigned</Text>
                 {adminsNotAssigned.map((admin, index) => {
                   return <TouchableOpacity
                     key={index}

@@ -33,7 +33,7 @@ export default StyleSheet.create({
     shadowRadius: 2.62,
     elevation: 4,
   },
-  addFlowBtn: {
+  addProductBtn: {
     zIndex: 1000,
     position: 'absolute',
     bottom: 0,
@@ -59,7 +59,7 @@ export default StyleSheet.create({
   productBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: 2,
     paddingHorizontal: 10,
     paddingVertical: 14,
     marginTop: 5,

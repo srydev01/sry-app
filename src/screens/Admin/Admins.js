@@ -6,8 +6,7 @@ import { View, Text, Modal, ScrollView, TouchableOpacity, TouchableWithoutFeedba
 
 //Import firebase and config DB.
 import firebase from '../../database/config'
-import { getAuth } from 'firebase/auth'
-import { collection, doc, getDocs, query, addDoc, where, onSnapshot, orderBy, getDoc } from 'firebase/firestore'
+import { collection, doc, getDocs, query, addDoc, where, onSnapshot, orderBy, documentId } from 'firebase/firestore'
 
 //Import vector icons.
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
@@ -26,32 +25,26 @@ export default function Admins(props) {
   //Main theme colors. (You can modify at "MainContainer.js" ).
   const mainTheme = props.mainTheme
 
-  const auth = getAuth()
-
-  //Get all admins
-  useEffect(() => {
-    const adminsSubscribe = onSnapshot(query(collection(doc(firebase, 'users', props.extraData.id), 'admins'), orderBy('createdDate')), admins => callbackAdmins(admins))
-    return () => adminsSubscribe()
-  }, [])
+  const userDoc = doc(firebase, 'users', props.extraData.id)
+  const adminCol = collection(userDoc, 'admins')
+  const userCol = collection(firebase, 'users')
 
   const callbackAdmins = (admins) => {
-    let i = 1
-    let adminsBuffer = []
-    admins.forEach(admin => {
-      getDoc(admin.data().user).then(user => {
-        adminsBuffer.push(user.data())
-        if (i == admins.docs.length) {
-          setAdmins(adminsBuffer)
-          setAdminsRef(adminsBuffer)
-          setRefreshing(false)
-        }
-        i++
-      })
+    getDocs(query(userCol, where(documentId(), 'in', admins.docs.map(item => item.data().user.id)))).then(admins => {
+      setAdmins(admins.docs.map(adm => adm))
+      setAdminsRef(admins.docs.map(adm => adm))
+      setRefreshing(false)
     })
   }
 
+  //Get all admins
+  useEffect(() => {
+    const adminsSubscribe = onSnapshot(query(adminCol, orderBy('createdDate')), admins => callbackAdmins(admins))
+    return () => adminsSubscribe()
+  }, [])
+
   const onRefresh = () => {
-    getDocs(query(collection(doc(firebase, 'users', props.extraData.id), 'admins'), orderBy('createdDate'))).then(admins => callbackAdmins(admins))
+    getDocs(query(adminCol, orderBy('createdDate'))).then(admins => callbackAdmins(admins))
   }
 
   //On search admins
@@ -64,6 +57,10 @@ export default function Admins(props) {
       }
     })
     setAdmins(adminsFilter)
+  }
+
+  const onPressAdmin = (admin) => {
+    props.navigation.navigate('AdminViewScreen', { adminId: admin.id })
   }
 
   //On press add admin.
@@ -110,19 +107,14 @@ export default function Admins(props) {
         }
       >
         <View style={styles.adminsList}>
-          {admins.map((item, index) => {
+          {admins.map((admin, index) => {
             return <TouchableOpacity
               key={index}
-              style={[styles.adminBox, mainTheme.Color]}
+              style={[styles.adminBox, mainTheme.ColorAdmin]}
+              onPress={() => onPressAdmin(admin)}
             >
               <Text style={[styles.adminTitle, mainTheme.TextColorLight]}>
-                <Text style={styles.adminUsername}>{item.username + '  '}</Text><View style={styles.adminRef}><Text>{'#' + item.ref}</Text></View>
-              </Text>
-              <Text style={[styles.adminFlows, mainTheme.TextColorLight]}>
-                Workflows: All
-              </Text>
-              <Text style={[styles.adminFlows, mainTheme.TextColorLight]}>
-                Products: All
+                <Text style={styles.adminUsername}>{admin.data().username + '  '}</Text><View style={styles.adminRef}><Text>{'#' + admin.data().ref}</Text></View>
               </Text>
             </TouchableOpacity>
           })}
@@ -155,7 +147,7 @@ export default function Admins(props) {
                   />
                 </TouchableOpacity>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, mainTheme.BorderAdmin2]}
                   placeholder='Ref'
                   placeholderTextColor="#aaaaaa"
                   onChangeText={(text) => setRef(text)}
@@ -165,7 +157,7 @@ export default function Admins(props) {
                   color={mainTheme.TextColor.Color}
                 />
                 <TouchableOpacity
-                  style={[styles.buttonAdd, mainTheme.Color]}
+                  style={[styles.buttonAdd, mainTheme.ColorAdmin]}
                   onPress={() => addAdmin()}>
                   <Foundation
                     name="plus"
@@ -183,7 +175,7 @@ export default function Admins(props) {
       </ScrollView>
       <View style={styles.bottomBar}>
         <TextInput
-          style={styles.search}
+          style={[styles.search, mainTheme.BorderAdmin2]}
           placeholder='Search admins'
           placeholderTextColor="#aaaaaa"
           onChangeText={(text) => onSearch(text)}
@@ -192,7 +184,7 @@ export default function Admins(props) {
           autoCapitalize="none"
         />
         <TouchableOpacity
-          style={[styles.addAdminBtn, mainTheme.Color]}
+          style={[styles.addAdminBtn, mainTheme.ColorAdmin]}
           onPress={() => addAdminPress()}
         >
           <FontAwesome

@@ -6,7 +6,7 @@ import styles from "./styles";
 
 //Import firebase and config DB.
 import firebase from '../../database/config'
-import { collection, doc, getDocs, query, addDoc, onSnapshot, orderBy } from 'firebase/firestore'
+import { collection, doc, getDocs, query, addDoc, onSnapshot, orderBy, where } from 'firebase/firestore'
 
 //Import vector icons.
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -30,7 +30,7 @@ export default function Workflows(props) {
 
   //Get all workflows
   useEffect(() => {
-    const adminsSubscribe = onSnapshot(query(workFlowCol, orderBy('createdDate')), data => {
+    const adminsSubscribe = onSnapshot(query(workFlowCol, where('active', '==', true)), data => {
       let i = 1
       let wfRef = []
       data.forEach(wf => {
@@ -100,7 +100,7 @@ export default function Workflows(props) {
             return <View key={index}>
               <TouchableOpacity
                 activeOpacity={0.5}
-                style={[styles.flowBox, mainTheme.Color]}
+                style={[styles.flowBox, mainTheme.ColorWF]}
                 onPress={() => onPressWorkflow(index)}
               >
                 <Text style={[styles.flowName, mainTheme.TextColorLight]}>
@@ -158,7 +158,7 @@ export default function Workflows(props) {
               </TouchableOpacity>
               <ScrollView>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, mainTheme.BorderWF2]}
                   placeholderTextColor="#aaaaaa"
                   underlineColorAndroid="transparent"
                   autoCapitalize="none"
@@ -169,7 +169,7 @@ export default function Workflows(props) {
                   onSubmitEditing={() => addWorkflow()}
                 />
                 <TouchableOpacity
-                  style={[styles.buttonAdd, mainTheme.Color]}
+                  style={[styles.buttonAdd, mainTheme.ColorWF]}
                   onPress={() => addWorkflow()}>
                   <Foundation
                     name="plus"
@@ -187,7 +187,7 @@ export default function Workflows(props) {
       </Modal>
       <View style={styles.bottomBar}>
         <TextInput
-          style={styles.search}
+          style={[styles.search, mainTheme.BorderWF2]}
           placeholder='Search workflows'
           placeholderTextColor="#aaaaaa"
           onChangeText={(text) => onSearch(text)}
@@ -196,7 +196,7 @@ export default function Workflows(props) {
           autoCapitalize="none"
         />
         <TouchableOpacity
-          style={[styles.addFlowBtn, mainTheme.Color]}
+          style={[styles.addFlowBtn, mainTheme.ColorWF]}
           onPress={() => onPressAddWf()}
         >
           <MaterialIcons

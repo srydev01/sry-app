@@ -5,7 +5,7 @@ import { RadioButton } from 'react-native-paper'
 import styles from "./styles";
 
 //Import vector icons.
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
 import firebase from "../../database/config";
@@ -133,7 +133,7 @@ export default function Products(props) {
             return <View key={index}>
               <TouchableOpacity
                 activeOpacity={0.5}
-                style={[styles.productBox, mainTheme.Color]}
+                style={[styles.productBox, mainTheme.ColorProduct]}
               >
                 <Text style={[styles.productCode, mainTheme.TextColorLight]}>
                   {product.data().code}
@@ -156,27 +156,6 @@ export default function Products(props) {
           })}
         </View>
       </ScrollView>
-      <View style={styles.bottomBar}>
-        <TextInput
-          style={styles.search}
-          placeholder='Search products'
-          placeholderTextColor="#aaaaaa"
-          onChangeText={(text) => onSearch(text)}
-          value={nameSearch}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
-        <TouchableOpacity
-          style={[styles.addFlowBtn, mainTheme.Color]}
-          onPress={() => onPressAddProduct()}
-        >
-          <MaterialIcons
-            name='add-to-photos'
-            size={32}
-            color={mainTheme.TextColorLight.color}
-          />
-        </TouchableOpacity>
-      </View>
       <Modal
         animationType='fade'
         transparent={true}
@@ -191,7 +170,7 @@ export default function Products(props) {
             <ScrollView>
               <TextInput
                 ref={productCodeRef}
-                style={styles.input}
+                style={[styles.input, mainTheme.BorderProduct2]}
                 color={mainTheme.TextColor.Color}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
@@ -202,7 +181,7 @@ export default function Products(props) {
               />
               <TextInput
                 ref={productNameRef}
-                style={styles.input}
+                style={[styles.input, mainTheme.BorderProduct2]}
                 color={mainTheme.TextColor.Color}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
@@ -213,7 +192,7 @@ export default function Products(props) {
               />
               <TextInput
                 ref={productPriceRef}
-                style={styles.input}
+                style={[styles.input, mainTheme.BorderProduct2]}
                 color={mainTheme.TextColor.Color}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
@@ -227,7 +206,7 @@ export default function Products(props) {
                 ref={productDescRef}
                 multiline={true}
                 numberOfLines={4}
-                style={styles.inputArea}
+                style={[styles.inputArea, mainTheme.BorderProduct2]}
                 color={mainTheme.TextColor.Color}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
@@ -240,7 +219,7 @@ export default function Products(props) {
                 {workflows.map((wf, index) => {
                   return <TouchableOpacity
                     key={index}
-                    style={[styles.wfBox, checkedWf && checkedWf.id == wf.id ? mainTheme.ColorSuccess : mainTheme.colorInActive]}
+                    style={[styles.wfBox, checkedWf && checkedWf.id == wf.id ? mainTheme.ColorWF : mainTheme.colorInActive]}
                     onPress={() => setCheckedWf(wf)}
                   >
                     <Text style={[styles.wfLabel, mainTheme.TextColorLight]}>{wf.data().name}</Text>
@@ -250,7 +229,7 @@ export default function Products(props) {
             </ScrollView>
             <View style={styles.modalGrpBtn}>
               <TouchableOpacity
-                style={[styles.buttonSave, mainTheme.ColorSuccess]}
+                style={[styles.buttonSave, mainTheme.ColorProduct]}
                 onPress={onEdit ? () => saveProduct() : () => addProduct()}
               >
                 <Text style={[styles.buttonAddTitle, mainTheme.TextColorLight]}>
@@ -269,6 +248,27 @@ export default function Products(props) {
           </View>
         </View>
       </Modal>
+      <View style={styles.bottomBar}>
+        <TextInput
+          style={[styles.search, mainTheme.BorderProduct2]}
+          placeholder='Search products'
+          placeholderTextColor="#aaaaaa"
+          onChangeText={(text) => onSearch(text)}
+          value={nameSearch}
+          underlineColorAndroid="transparent"
+          autoCapitalize="none"
+        />
+        <TouchableOpacity
+          style={[styles.addProductBtn, mainTheme.ColorProduct]}
+          onPress={() => onPressAddProduct()}
+        >
+          <MaterialCommunityIcons
+            name='text-box-plus'
+            size={30}
+            color={mainTheme.TextColorLight.color}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }

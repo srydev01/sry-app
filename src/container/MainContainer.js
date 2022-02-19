@@ -38,7 +38,16 @@ export default function MainContainer(props) {
     TextColorGrey: { color: '#444' },
     TextColorLight: { color: '#fff' },
     colorInActive: { backgroundColor: '#666' },
-    colorTextInActive: { color: '#666' }
+    colorTextInActive: { color: '#666' },
+    ColorProduct: { backgroundColor: '#006' },
+    BorderProduct: { borderColor: '#006', borderStyle: 'solid', borderWidth: 1 },
+    BorderProduct2: { borderColor: '#006', borderStyle: 'solid', borderWidth: 2 },
+    ColorAdmin: { backgroundColor: '#060' },
+    BorderAdmin: { borderColor: '#060', borderStyle: 'solid', borderWidth: 1 },
+    BorderAdmin2: { borderColor: '#060', borderStyle: 'solid', borderWidth: 2 },
+    ColorWF: { backgroundColor: '#700' },
+    BorderWF: { borderColor: '#700', borderStyle: 'solid', borderWidth: 1 },
+    BorderWF2: { borderColor: '#700', borderStyle: 'solid', borderWidth: 2 }
   })
 
   const Tab = createBottomTabNavigator()
